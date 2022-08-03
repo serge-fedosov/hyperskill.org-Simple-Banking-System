@@ -489,6 +489,193 @@ files:
         }
     }
   learner_created: false
-feedback_link: https://hyperskill.org/projects/93/stages/517/implement#comment
-status: Unchecked
-record: -1
+- name: src/banking/Account.java
+  visible: true
+  text: |
+    package banking;
+
+    public class Account {
+
+        private long balance;
+        private int pin;
+
+        public Account(long balance, int pin) {
+            this.balance = balance;
+            this.pin = pin;
+        }
+
+        public long getBalance() {
+            return balance;
+        }
+
+        public void setBalance(long balance) {
+            this.balance = balance;
+        }
+
+        public int getPin() {
+            return pin;
+        }
+
+        public void setPin(int pin) {
+            this.pin = pin;
+        }
+    }
+  learner_created: true
+- name: src/banking/BankingSystem.java
+  visible: true
+  text: |
+    package banking;
+
+    import java.util.*;
+
+
+
+    public class BankingSystem {
+
+        Scanner scanner = new Scanner(System.in);
+        HashMap<Long, Account> accounts = new HashMap<>();
+        long currentAccount = 0;
+
+        private void createAccount() {
+
+            final String MESSAGE = "\nYour card has been created\n" +
+                    "Your card number:\n" +
+                    "%s\n" +
+                    "Your card PIN:\n" +
+                    "%04d\n\n";
+
+            long maxAccount = 0;
+            if (accounts.size() == 0) {
+                maxAccount = 4000000000000000L;
+            } else {
+                for (var elem : accounts.entrySet()) {
+                    maxAccount = elem.getKey() > maxAccount ? elem.getKey() : maxAccount;
+                }
+            }
+
+            long newNumber = Long.parseLong(String.valueOf(maxAccount).substring(6, 15));
+            newNumber++;
+            String newNumberStr = String.format("400000%09d0", newNumber);
+
+            int sum = 0;
+            for (int i = 1; i < 16; i++) {
+                int k = (int) (newNumberStr.charAt(i - 1) - '0');
+                if (i % 2 != 0) k *= 2;
+                if (k > 9) k -= 9;
+                sum += k;
+            }
+            int crc = (10 - sum % 10) % 10;
+
+            newNumberStr = String.format("400000%09d%d", newNumber, crc);
+            newNumber = Long.parseLong(newNumberStr);
+
+            int pin = new Random().nextInt(10000);
+            accounts.put(Long.parseLong(newNumberStr), new Account(0, pin));
+
+            System.out.printf(MESSAGE, newNumberStr, pin);
+
+        }
+
+        private int logIntoAccount() {
+
+            System.out.println("\nEnter your card number:");
+            long account = scanner.nextLong();
+            System.out.println("Enter your PIN:");
+            int pin = scanner.nextInt();
+
+            if (accounts.containsKey(account) && accounts.get(account).getPin() == pin) {
+                System.out.println("\nYou have successfully logged in!\n");
+                currentAccount = account;
+
+                return loggedMenu();
+            } else {
+                System.out.println("\nWrong card number or PIN!\n\n");
+            }
+
+            return 1;
+        }
+
+        private void printBalance() {
+            System.out.printf("\nBalance: %d\n\n", accounts.get(currentAccount).getBalance());
+
+        }
+
+        public int loggedMenu() {
+
+            final String LOGGED_MENU = "1. Balance\n" +
+                    "2. Log out\n" +
+                    "0. Exit";
+
+            System.out.println(LOGGED_MENU);
+            int n = scanner.nextInt();
+            do {
+
+                switch (n) {
+                    case 1:
+                        printBalance();
+                        break;
+                    case 2:
+                        currentAccount = 0;
+                        System.out.println("\nYou have successfully logged out!\n");
+                        return 1;
+                    default:
+                        break;
+                }
+
+                if (n == 0) {
+                    return 0;
+                } else {
+                    System.out.println(LOGGED_MENU);
+                    n = scanner.nextInt();
+                }
+
+            } while (n != 0);
+
+            return 0;
+        }
+
+        public void mainMenu() {
+
+            final String MAIN_MENU = "1. Create an account\n" +
+                    "2. Log into account\n" +
+                    "0. Exit";
+
+            System.out.println(MAIN_MENU);
+            int n = scanner.nextInt();
+            do {
+
+                switch (n) {
+                    case 1:
+                        createAccount();
+                        break;
+                    case 2:
+                        n = logIntoAccount();
+                        break;
+                    default:
+                        break;
+                }
+
+                if (n != 0) {
+                    System.out.println(MAIN_MENU);
+                    n = scanner.nextInt();
+                }
+
+            } while (n != 0);
+
+            System.out.println("\nBye!");
+
+        }
+    }
+  learner_created: true
+- name: test0105.db
+  visible: true
+  learner_created: true
+- name: card.s3db
+  visible: true
+  learner_created: true
+feedback_link: https://hyperskill.org/learn/step/8427#comment
+status: Solved
+feedback:
+  message: Congratulations!
+  time: Wed, 03 Aug 2022 09:16:22 UTC
+record: 3

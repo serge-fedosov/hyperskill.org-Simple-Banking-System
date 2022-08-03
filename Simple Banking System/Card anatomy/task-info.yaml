@@ -245,9 +245,9 @@ files:
 - name: src/banking/Account.java
   visible: true
   learner_created: true
-feedback_link: https://hyperskill.org/projects/93/stages/515/implement#comment
+feedback_link: https://hyperskill.org/learn/step/8425#comment
 status: Solved
 feedback:
   message: Congratulations!
   time: Tue, 02 Aug 2022 19:27:21 UTC
-record: -1
+record: 1
